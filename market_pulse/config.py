@@ -1,0 +1,15 @@
+# Defining a dictionary with the sectors and the thickers I want to include in the analysis: TICKERS_BY_SECTOR
+
+TICKERS_BY_SECTOR = {
+    "Technology": ["AAPL", "MSFT", "NVDA"],
+    "Energy": ["XOM", "CVX"],
+    "Healthcare": ["JNJ", "PFE"],
+    "Financials": ["JPM", "BAC"],
+    "Consumer": ["PG", "KO"],
+}
+
+# Default configuration values
+DEFAULT_PERIOD = "1y" 
+DEFAULT_INTERVAL = "1d"
+AUTO_ADJUST = True 
+TRADING_DAYS_PER_YEAR = 252
