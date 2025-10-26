@@ -10,3 +10,10 @@ __pycache__/
 
 # IDE folders
 .vscode/
+
+# Ignore data and outputs
+data/
+outputs/
+
+# Ignore notebooks checkpoints
+.ipynb_checkpoints/
