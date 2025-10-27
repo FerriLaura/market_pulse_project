@@ -2,10 +2,8 @@
 
 TICKERS_BY_SECTOR = {
     "Technology": ["AAPL", "MSFT", "NVDA"],
-    "Energy": ["XOM", "CVX"],
-    "Healthcare": ["JNJ", "PFE"],
-    "Financials": ["JPM", "BAC"],
-    "Consumer": ["PG", "KO"],
+    "Energy": ["XOM", "CVX", "COP"],
+    "Healthcare": ["JNJ", "PFE", "UHN"],
 }
 
 # Default configuration values

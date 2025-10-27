@@ -31,9 +31,13 @@ def fetch_prices(
 
     return df
 
-data = fetch_prices(["AAPL", "MSFT"])
-print(data.head())
 
 if __name__ == "__main__":
-    from .config import TICKERS_BY_SECTOR
-    fetch_prices(TICKERS_BY_SECTOR["Technology"])
+    from market_pulse.config import TICKERS_BY_SECTOR
+
+    print("Loaded sectors:", list(TICKERS_BY_SECTOR.keys()))
+
+    all_tickers = [t for lst in TICKERS_BY_SECTOR.values() for t in lst]
+    print("Tickers to fetch:", all_tickers, " (n =", len(all_tickers), ")")
+
+    fetch_prices(all_tickers, fname_prefix="all_sector_prices")
