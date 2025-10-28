@@ -40,4 +40,4 @@ if __name__ == "__main__":
     all_tickers = [t for lst in TICKERS_BY_SECTOR.values() for t in lst]
     print("Tickers to fetch:", all_tickers, " (n =", len(all_tickers), ")")
 
-    fetch_prices(all_tickers, fname_prefix="all_sector_prices")
+    fetch_prices(all_tickers, fname_prefix="prices.csv")
