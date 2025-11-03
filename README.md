@@ -122,3 +122,47 @@ The visualization.py script turns the results into clear and interpretable chart
 All plots are automatically saved as PNG files in the outputs/ folder.
 
 By combining automated data collection, statistical computation and visualization, the project provieds a complete picture of hoe different sectors perform and interact over time.
+
+## Conclusions
+the analysis compared three major U.S. stock market sectors: Technology, Energy and healthcare, over the past year, using three representatives companies from each.
+
+### Analysis of the sector performance
+
+The **Technology** sector (represented by Apple, Microsoft and NVIDIA) showed the highest mean annual return among the three sectors. This confirms that technology stocks have been the main drivers of market growth in recent years, propelled by innovation in AI, software, and semiconductures. However, such strong returns come with higher exposure to investor sentiment and macroeconomic changes, which can amplify price movements. 
+
+The **Energy sector** (Exxon Mobil, Chevron, and ConocoPhillips) showed moderate but consistent returns.
+Its performance is closely tied to global oil demand, production levels, and geopolitical factors.
+During periods of high commodity prices, energy stocks tend to outperform the broader market, but they can also experience sharp downturns when oil prices fall.
+
+The **Healthcare sector** (Johnson & Johnson, Pfizer, and AbbVie) recorded the lowest average return, though still positive.
+This is coherent with the sector’s historical behavior: healthcare companies offer stable growth due to steady demand for medical products and pharmaceuticals, but they do not experience explosive gains like technology firms.
+Their defensive nature makes them a refuge during market uncertainty or downturns. 
+
+### Risk analysis - volatility and variance
+
+The results showed clear differences between sectors: 
+- Technology had the highest volatility, confirming that each stocks carry greater risk. Their prices are influenced by innovation cycles, earnings surprises, and investor speculation. 
+- Energy exhibited medium-to-high volatility, largely driven by external macroeconomic and geopolitical factors (e.g., oil prices, OPEC decisions, global conflicts).
+- Healthcare had the lowest volatility, demonstrating strong price stability and resilience even in volatile market environments.
+
+In financial terms, high volatility means greater uncertainty — while it can lead to higher returns, it also implies higher potential losses.
+Thus, investors seeking growth might favor Technology, while those prioritizing stability would lean toward Healthcare.
+
+### Correlation Analysis - sector interdependence
+
+The correlation heatmap provided key insights into how sectors move relative to one another:
+- Technology and Healthcare exhibited a low correlation, meaning their price movements are largely independent. This makes them complementary in a diversified portfolio.
+- Technology and Energy showed a moderate positive correlation, suggesting that both sectors may respond similarly to broad market trends such as global economic expansion or contraction.
+- Energy and Healthcare displayed the weakest correlation, confirming their distinct economic drivers — one driven by commodities, the other by demographic and healthcare needs.
+
+These results support the principle of sector diversification: combining uncorrelated sectors helps reduce portfolio risk without sacrificing overall return potential.
+This confirms a classic trade-off in finance: higher expected return usually comes with higher risk.
+By mixing these three sectors, an investor can achieve a balanced portfolio that captures growth opportunities while maintaining stability.
+
+While this analysis provides valuable insights, several limitations exist: 
+- Only one year of data was used: extending the period would make results more robust; 
+- The sectors were represented by three eqaully weighted companies: weighting them by market capitalization could better reflect real-world portfolios;
+- The analysis was based on daily data; using rolling windows (e.g. 30-day or 90-day volatility) could reveal how risk evolves over time; 
+- Future work could incorporate risk-adjusted performance metrics like Sharpe ratio, or explore sector ETFs instead of individual stocks for broader coverage.
+
+## Interpretation of the plots????
