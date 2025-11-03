@@ -65,7 +65,7 @@ Each part of the process - data collection, computation, and visualization - is 
 ### 1. Data collection
 Historical stock price data were retrieved directly from Yahoo Finance using the yfinance Python library. The data.py script fetches daily adjusted closing prices for each selected ticker over the past year. 
 Key parameters are fixed on the config.py module: 
-- period: 1 year
+- period: 5 years
 - interval: daily
 - auto adjust: enabled to account for stock splits and dividends
 
@@ -73,7 +73,7 @@ Each sector is represented by three of the most capitalized companies in the U.S
 
 In data.py script, a function called fetch_prices() is defined to download and organize the price data. 
 This function: 
-- takes as inputa a list of tickers (the ones defined in config.py);
+- takes as input a list of tickers (the ones defined in config.py);
 - downloads their adjusted closing prices over the selected period;
 - cleans missing data;
 - saves the resulting table as a CSV file in the data/ folder. 
@@ -97,14 +97,19 @@ The result is a dataset where each column represent one sector (technology, ener
 Next, the project computes key financial metrics for each sector: 
 - mean annual return, which measures expected performance; 
 - volatility: which measures risk or uncertainty (standard deviation of returns);
-- variance: which represents the spread of returns (square of volatility).
+- variance: which represents the spread of returns (square of volatility);
+- Sharpe ratio: measures risk-adjusted performance (how much excess return a sector generates per unit of risk).
 
-To annualize these three metrics, the script assumes 252 trading days per year (that is the average number of business days in financial markets).
+To annualize the metrics, the script assumes 252 trading days per year (that is the average number of business days in financial markets).
 
 Annualized mean = daily mean * 252
 Annualized volatility = daily volatility * radq(252)
 
-The results are saved in outputs/sector_summary.csv
+The Sharpe ratio is computed as: 
+Sharpe Ratio = (mean annual return - Rf)/Volatility
+where Rf is the risk-free rate, set to 2%, consistent with typical short-term Treasury yields.
+
+The results are saved in outputs/sector_summary.csv. 
 
 ### 5. Correlation analysis 
 To explore how sectors move together, the code computes a correlation matrix of sector's returns. This is a way to measure the strenght of the realtionship between sectors: 
@@ -114,19 +119,24 @@ To explore how sectors move together, the code computes a correlation matrix of 
 
 Correlation matrix is saved as outputs/sector_corr.csv
 
+The following files can be found in the outputs' folder: 
+- summary_stats.csv -> the table represents the values of the mean, the variance and the volatility computed for each ticker selected for the analysis. 
+- sector_summary.csv -> in this file we can find mean, variance, volatility and Sharpe ratio computed for each sector analyzed. 
+- correlation_matrix.csv -> is the correlation matrix that includes all the tickers analyzed; 
+- sector_corr.csv -> is the correlation matrix between the three sectors.
+
 ### 6. Visualization
 The visualization.py script turns the results into clear and interpretable charts: 
-- a bar chart for mean returns compares sector performances; 
-- a bar chart of volatilities compares sector risk levels; 
-- a heatmap of correlations visualizes how sectors move together. 
+- mean return bar chart (sector_mean.png): compares average performance across sectors; 
+- volatility bar chart (sector_volatility.png): shows relative sector risk; 
+- Sharpe ratio bar chart (sector_sharpe.png): visualizes which sectors achieved the best risk-adjusted performance;
+- Correlation heatmap (sector_corr_heatmap.png): highlights how strongly sectors move together.
 All plots are automatically saved as PNG files in the outputs/ folder.
 
 By combining automated data collection, statistical computation and visualization, the project provieds a complete picture of hoe different sectors perform and interact over time.
 
-## Conclusions
-the analysis compared three major U.S. stock market sectors: Technology, Energy and healthcare, over the past year, using three representatives companies from each.
 
-### Analysis of the sector performance
+## Interpretation of the sector's performance
 
 The **Technology** sector (represented by Apple, Microsoft and NVIDIA) showed the highest mean annual return among the three sectors. This confirms that technology stocks have been the main drivers of market growth in recent years, propelled by innovation in AI, software, and semiconductures. However, such strong returns come with higher exposure to investor sentiment and macroeconomic changes, which can amplify price movements. 
 
@@ -165,4 +175,17 @@ While this analysis provides valuable insights, several limitations exist:
 - The analysis was based on daily data; using rolling windows (e.g. 30-day or 90-day volatility) could reveal how risk evolves over time; 
 - Future work could incorporate risk-adjusted performance metrics like Sharpe ratio, or explore sector ETFs instead of individual stocks for broader coverage.
 
-## Interpretation of the plots????
+## Conclusions
+This project demonstrated how quantitative analysis and data visualization can uncover the underlying dynamics of financial markets.
+By examining Technology, Energy, and Healthcare, it showed how sectors differ in performance, risk, and interdependence — and how these differences can be strategically combined for diversification.
+The results confirm that high returns are typically linked to high volatility, while defensive sectors provide stability during uncertainty.
+Overall, Market Pulse highlights that understanding sector relationships is essential for building resilient, data-driven investment strategies.
+
+
+
+----- add: 
+- interpreting Sharpe ratio
+We complement return and volatility with the Sharpe ratio, which measures excess return per unit of risk. Using a 2% annual risk-free rate, Technology delivers the highest Sharpe (best risk-adjusted performance), Healthcare remains stable with moderate Sharpe, and Energy varies with commodity cycles.
+Sharpe>1 is good. Sharpe< 0 is very bad (underperforming risk free!!)
+
+- bar chart with the sharpe ratio per sector
