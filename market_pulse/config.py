@@ -7,7 +7,7 @@ TICKERS_BY_SECTOR = {
 }
 
 # Default configuration values
-DEFAULT_PERIOD = "1y" 
+DEFAULT_PERIOD = "5y" 
 DEFAULT_INTERVAL = "1d"
 AUTO_ADJUST = True 
 TRADING_DAYS_PER_YEAR = 252
