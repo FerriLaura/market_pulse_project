@@ -14,11 +14,14 @@ def compute_daily_returns(prices: pd.DataFrame) -> pd.DataFrame:
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 def summarize_returns(
     returns: pd.DataFrame,
     annualize: bool = True,
     trading_days: int = TRADING_DAYS_PER_YEAR
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 # annualize statistics
@@ -54,6 +57,9 @@ def summarize_returns(
     trading_days: int = TRADING_DAYS_PER_YEAR, 
     risk_free_annual: float = 0.02
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -62,6 +68,7 @@ def summarize_returns(
         raise ValueError("returns is empty")
     
     mean_daily = returns.mean()
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     vol_daily = returns.std()
@@ -74,6 +81,8 @@ def summarize_returns(
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     vol_daily = returns.std(ddof=1)
     var_daily = vol_daily ** 2
 
@@ -84,6 +93,9 @@ def summarize_returns(
         vol    = vol_daily * np.sqrt(trading_days)  # annualized volatility
         var    = vol ** 2
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -100,6 +112,9 @@ def summarize_returns(
 
     out["Sharpe"] = sharpe_ratio(returns, risk_free_annual, trading_days)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -113,6 +128,10 @@ def correlation_matrix(returns: pd.DataFrame) -> pd.DataFrame:
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+# compute sector aggregation (equally weighted)
+>>>>>>> Stashed changes
 =======
 # compute sector aggregation (equally weighted)
 >>>>>>> Stashed changes
@@ -133,6 +152,7 @@ def make_sector_returns(
         sector_cols[sector] = returns[cols].mean(axis=1)
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 
 >>>>>>> Stashed changes
@@ -142,6 +162,12 @@ def make_sector_returns(
     sector_ret = pd.DataFrame(sector_cols)
     return sector_ret.dropna()
 
+=======
+
+    sector_ret = pd.DataFrame(sector_cols)
+    return sector_ret.dropna()
+
+>>>>>>> Stashed changes
 # Save any dataframe to CSV, creating parent folders if needed
 def save_table(df: pd.DataFrame, path: str | Path) -> None:
     path = Path(path)
