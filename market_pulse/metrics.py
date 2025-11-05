@@ -12,18 +12,11 @@ def compute_daily_returns(prices: pd.DataFrame) -> pd.DataFrame:
     # percent daily returns
     return prices.pct_change().dropna()
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 def summarize_returns(
     returns: pd.DataFrame,
     annualize: bool = True,
     trading_days: int = TRADING_DAYS_PER_YEAR
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
 # annualize statistics
 def annualize_stats(
         daily_mean: pd.Series,
@@ -56,21 +49,11 @@ def summarize_returns(
     annualize: bool = True,
     trading_days: int = TRADING_DAYS_PER_YEAR, 
     risk_free_annual: float = 0.02
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 ) -> pd.DataFrame:
     if returns.empty:
         raise ValueError("returns is empty")
     
     mean_daily = returns.mean()
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     vol_daily = returns.std()
     var_daily = vol_daily**2
 
@@ -78,11 +61,6 @@ def summarize_returns(
         mean = mean_daily * trading_days
         vol = vol_daily * np.sqrt(trading_days)
         var = vol**2
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     vol_daily = returns.std(ddof=1)
     var_daily = vol_daily ** 2
 
@@ -92,13 +70,7 @@ def summarize_returns(
         mean   = growth ** (trading_days / N) - 1   # 1-year equivalent (geometric)
         vol    = vol_daily * np.sqrt(trading_days)  # annualized volatility
         var    = vol ** 2
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
     else:
         mean, vol, var = mean_daily, vol_daily, var_daily
     
@@ -107,17 +79,10 @@ def summarize_returns(
         "Volatility": vol,
         "Variance": var,
     })
-<<<<<<< Updated upstream
-=======
+
 
     out["Sharpe"] = sharpe_ratio(returns, risk_free_annual, trading_days)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
     out.index.name = "Ticker"
     return out
 
@@ -126,18 +91,7 @@ def summarize_returns(
 def correlation_matrix(returns: pd.DataFrame) -> pd.DataFrame:
     return returns.corr()
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
 # compute sector aggregation (equally weighted)
->>>>>>> Stashed changes
-=======
-# compute sector aggregation (equally weighted)
->>>>>>> Stashed changes
-=======
-# compute sector aggregation (equally weighted)
->>>>>>> Stashed changes
 def make_sector_returns(
     returns: pd.DataFrame,
     tickers_by_sector: dict[str, list[str]],
@@ -150,28 +104,16 @@ def make_sector_returns(
             print(f"No tickers found for sector: {sector}")
             continue
         sector_cols[sector] = returns[cols].mean(axis=1)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
-=======
-
->>>>>>> Stashed changes
     sector_ret = pd.DataFrame(sector_cols)
     return sector_ret.dropna()
 
-=======
 
     sector_ret = pd.DataFrame(sector_cols)
     return sector_ret.dropna()
 
->>>>>>> Stashed changes
 # Save any dataframe to CSV, creating parent folders if needed
 def save_table(df: pd.DataFrame, path: str | Path) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(path)
     print(f"saved:{path}")
-
