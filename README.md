@@ -1,15 +1,16 @@
 # Market Pulse
 
 **Market Pulse** explores the behavior of different stock market sectors using historical data from Yahoo Finance.
-It analyzes sector performance, volatility, and correlations to uncover how various parts of the market move together.
+In particular, performance (returns), risk (volatility), risk-adjusted performance (Sharpe ratio) and co-movement between sectors (correlation) were analyzed during the project.
+
 
 ---
 
 ## Project's goals
 
-The goal of this project is to: 
+The goals of this project are the following:
 - Fetch and clean real stock data using the 'yfinance' API;
-- Compute daily returns, annualized mean returns, mean variance and volatility;
+- Compute daily returns, annualized mean returns, mean variance, volatility and Sharpe ratio;
 - Compare risk-return profile across three different sectors: healthcare, technology and energy; 
 - Visualize relationship through correlation heatmaps and summary plots.
 
@@ -35,8 +36,7 @@ market_pulse_project/
 │   ├── metrics.py               # Computations (returns, volatility, correlation)
 │   └── visualization.py         # Plotting utilities
 │
-├── scripts/
-│   └── main.py                  # Orchestrates the full pipeline
+├── main.py                      # Orchestrates the full pipeline
 │
 ├── data/                        # Generated prices
 ├── outputs/                     # Summary tables & plots
@@ -58,6 +58,11 @@ The project follows the structure that was just presented.
 - .gitignore -> specifies files and folders (like .venv/ or /data/) that should not be tracked by Git. 
 - README.md -> explains the project's goals, structure, methods, and results.
 
+### Branches
+In the project, there are two different benaches: 
+- main is the early version of the project, in which sectors were characterized by baskets of stocks, equally-weighted. This was the first idea to develop the project, but it is strongly biased. 
+- the etf-version is the second branch of the project: the final version. Sectors are directly represented by ETFs, so that there are not problemns linked to weighting of the tickers that compose sectors. 
+
 ## Project methods 
 This project follows a structured pipeline that transforms raw financial data into quantitative insights about sector preformance, risk and interdipendence. 
 Each part of the process - data collection, computation, and visualization - is handled by a dedicated module within the project. 
@@ -65,11 +70,9 @@ Each part of the process - data collection, computation, and visualization - is 
 ### 1. Data collection
 Historical stock price data were retrieved directly from Yahoo Finance using the yfinance Python library. The data.py script fetches daily adjusted closing prices for each selected ticker over the past year. 
 Key parameters are fixed on the config.py module: 
-- period: 5 years
+- period: 1 years
 - interval: daily
 - auto adjust: enabled to account for stock splits and dividends
-
-Each sector is represented by three of the most capitalized companies in the U.S. market.
 
 In data.py script, a function called fetch_prices() is defined to download and organize the price data. 
 This function: 
@@ -86,14 +89,8 @@ The formula is: Rt=(Pt-Pt-1)/Pt-1
 This is done automatically in this project using the pandas method .pct_change().
 Daily returns are the foundation for all sebsequent financial metrics because they quantify how much one price moves from one day to the next. 
 
-### 3. Sector-level aggregation
-After computing returns for each ticker, the analysis aggregates them into sector-level daily returns to observe how entire sectors behave. 
-This is done in the script main.py using the function make_sector_returns(), which averages the daily returns of all companies within each sector. 
-The formula is: R_{\text{sector},t} = \frac{1}{n} \sum_{i=1}^{n} R_{i,t}
-This approach gives each company equal weight in its sector, ensuring that one large firm does not domnate the sector's performance. 
-The result is a dataset where each column represent one sector (technology, energy and healthcare) and each row shows that sector's average daily return. 
 
-### 4. Performance and risk metrics
+### 3. Performance and risk metrics
 Next, the project computes key financial metrics for each sector: 
 - mean annual return, which measures expected performance; 
 - volatility: which measures risk or uncertainty (standard deviation of returns);
@@ -111,7 +108,7 @@ where Rf is the risk-free rate, set to 2%, consistent with typical short-term Tr
 
 The results are saved in outputs/sector_summary.csv. 
 
-### 5. Correlation analysis 
+### 4. Correlation analysis 
 To explore how sectors move together, the code computes a correlation matrix of sector's returns. This is a way to measure the strenght of the realtionship between sectors: 
 - A correlation matrix close to +1 means they move together; 
 - A correlation close to 0 means they move independently, 
@@ -125,7 +122,7 @@ The following files can be found in the outputs' folder:
 - correlation_matrix.csv -> is the correlation matrix that includes all the tickers analyzed; 
 - sector_corr.csv -> is the correlation matrix between the three sectors.
 
-### 6. Visualization
+### 5. Visualization
 The visualization.py script turns the results into clear and interpretable charts: 
 - mean return bar chart (sector_mean.png): compares average performance across sectors; 
 - volatility bar chart (sector_volatility.png): shows relative sector risk; 
@@ -135,57 +132,22 @@ All plots are automatically saved as PNG files in the outputs/ folder.
 
 By combining automated data collection, statistical computation and visualization, the project provieds a complete picture of hoe different sectors perform and interact over time.
 
+### 6. Full pipeline
+main.py is the orchestration script. It generates the entire workflow from data collection to final visualization.
 
-## Interpretation of the sector's performance
+## Interpretation of results
+The analysis of the three sector ETFs — XLK (Technology), XLE (Energy), and XLV (Healthcare) — reveals distinct performance and risk characteristics over the analyzed period. The Technology sector (XLK) shows the strongest results, with an annualized mean return of about 28% and a Sharpe ratio close to 1, indicating excellent risk-adjusted performance. This means that technology stocks have delivered high returns relative to their volatility, efficiently compensating investors for the risk taken.
 
-The **Technology** sector (represented by Apple, Microsoft and NVIDIA) showed the highest mean annual return among the three sectors. This confirms that technology stocks have been the main drivers of market growth in recent years, propelled by innovation in AI, software, and semiconductures. However, such strong returns come with higher exposure to investor sentiment and macroeconomic changes, which can amplify price movements. 
+In contrast, the Energy sector (XLE) exhibits high volatility (~24%) but a slightly negative mean return (−0.5%), leading to a negative Sharpe ratio. This suggests that energy investors faced considerable risk without corresponding returns — likely reflecting the recent instability of oil markets and cyclical price pressures in the energy industry.
 
-The **Energy sector** (Exxon Mobil, Chevron, and ConocoPhillips) showed moderate but consistent returns.
-Its performance is closely tied to global oil demand, production levels, and geopolitical factors.
-During periods of high commodity prices, energy stocks tend to outperform the broader market, but they can also experience sharp downturns when oil prices fall.
+The Healthcare sector (XLV) presents the lowest volatility (~17%), confirming its defensive nature, but its mean return (~1.6%) and near-zero Sharpe ratio indicate that it barely outperformed the risk-free benchmark. Healthcare thus behaved as a stable but low-return sector, providing balance rather than growth.
 
-The **Healthcare sector** (Johnson & Johnson, Pfizer, and AbbVie) recorded the lowest average return, though still positive.
-This is coherent with the sector’s historical behavior: healthcare companies offer stable growth due to steady demand for medical products and pharmaceuticals, but they do not experience explosive gains like technology firms.
-Their defensive nature makes them a refuge during market uncertainty or downturns. 
+Overall, Technology was the best-performing and most efficient sector, Energy underperformed despite its risk, and Healthcare offered stability with limited upside. These results are consistent with market trends in which growth-oriented sectors have outpaced more cyclical or defensive ones during periods of economic recovery and investor optimism.
 
-### Risk analysis - volatility and variance
+All Sharpe ratios in this analysis were computed assuming a 2% annual risk-free rate, which approximates the return on short-term U.S. Treasury bills — a common benchmark in financial analysis. This adjustment ensures that sector performance is measured relative to a virtually riskless investment, helping to determine whether the additional risk taken in each sector is adequately rewarded.
 
-The results showed clear differences between sectors: 
-- Technology had the highest volatility, confirming that each stocks carry greater risk. Their prices are influenced by innovation cycles, earnings surprises, and investor speculation. 
-- Energy exhibited medium-to-high volatility, largely driven by external macroeconomic and geopolitical factors (e.g., oil prices, OPEC decisions, global conflicts).
-- Healthcare had the lowest volatility, demonstrating strong price stability and resilience even in volatile market environments.
+All three sectors show positive but moderate correlations, indicating that they tend to rise and fall together in broad market cycles, but still offer some diversification benefits when combined in a portfolio.
+	•	Technology (XLK) and Energy (XLE) share the highest correlation, meaning they are more likely to react similarly to macroeconomic conditions such as GDP growth or inflation expectations.
+	•	Healthcare (XLV) remains the most independent sector, with lower correlations to both technology and energy — confirming its traditional role as a defensive, less market-sensitive component in a diversified portfolio.
 
-In financial terms, high volatility means greater uncertainty — while it can lead to higher returns, it also implies higher potential losses.
-Thus, investors seeking growth might favor Technology, while those prioritizing stability would lean toward Healthcare.
-
-### Correlation Analysis - sector interdependence
-
-The correlation heatmap provided key insights into how sectors move relative to one another:
-- Technology and Healthcare exhibited a low correlation, meaning their price movements are largely independent. This makes them complementary in a diversified portfolio.
-- Technology and Energy showed a moderate positive correlation, suggesting that both sectors may respond similarly to broad market trends such as global economic expansion or contraction.
-- Energy and Healthcare displayed the weakest correlation, confirming their distinct economic drivers — one driven by commodities, the other by demographic and healthcare needs.
-
-These results support the principle of sector diversification: combining uncorrelated sectors helps reduce portfolio risk without sacrificing overall return potential.
-This confirms a classic trade-off in finance: higher expected return usually comes with higher risk.
-By mixing these three sectors, an investor can achieve a balanced portfolio that captures growth opportunities while maintaining stability.
-
-While this analysis provides valuable insights, several limitations exist: 
-- Only one year of data was used: extending the period would make results more robust; 
-- The sectors were represented by three eqaully weighted companies: weighting them by market capitalization could better reflect real-world portfolios;
-- The analysis was based on daily data; using rolling windows (e.g. 30-day or 90-day volatility) could reveal how risk evolves over time; 
-- Future work could incorporate risk-adjusted performance metrics like Sharpe ratio, or explore sector ETFs instead of individual stocks for broader coverage.
-
-## Conclusions
-This project demonstrated how quantitative analysis and data visualization can uncover the underlying dynamics of financial markets.
-By examining Technology, Energy, and Healthcare, it showed how sectors differ in performance, risk, and interdependence — and how these differences can be strategically combined for diversification.
-The results confirm that high returns are typically linked to high volatility, while defensive sectors provide stability during uncertainty.
-Overall, Market Pulse highlights that understanding sector relationships is essential for building resilient, data-driven investment strategies.
-
-
-
------ add: 
-- interpreting Sharpe ratio
-We complement return and volatility with the Sharpe ratio, which measures excess return per unit of risk. Using a 2% annual risk-free rate, Technology delivers the highest Sharpe (best risk-adjusted performance), Healthcare remains stable with moderate Sharpe, and Energy varies with commodity cycles.
-Sharpe>1 is good. Sharpe< 0 is very bad (underperforming risk free!!)
-
-- bar chart with the sharpe ratio per sector
+The correlation structure suggests that while these ETFs are all part of the broader equity market, they respond differently to economic forces. A portfolio combining Technology, Energy, and Healthcare ETFs would therefore benefit from risk reduction through diversification, without sacrificing exposure to both growth and defensive market segments.
