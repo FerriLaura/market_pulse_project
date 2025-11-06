@@ -1,5 +1,4 @@
-# --- Sector ETFs ------
-
+# Sector ETFs 
 SECTOR_ETFS = {
     "Technology": "XLK",
     "Energy": "XLE",
