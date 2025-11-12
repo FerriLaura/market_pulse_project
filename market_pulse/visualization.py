@@ -5,14 +5,12 @@ import pandas as pd
 from pathlib import Path
 
 # Utility to save or show plots (show on schreen or save it to file if a path is provided)
-def _save_or_show(out_path: str | Path = None):
+def _maybe_save(fig, out_path):
     if out_path:
         Path(out_path).parent.mkdir(parents=True, exist_ok=True) # Ensure folder exists
         plt.savefig(out_path, bbox_inches="tight") # Save plot
         print(f"Saved plot: {out_path}")
-    else:
-        plt.show()              # Display the plot if it is not saved
-    plt.close()                 # Clear figure from memory
+
 
 # Generic helper for bar plots
 def _bar_plot(
@@ -23,33 +21,55 @@ def _bar_plot(
     color: str = "skyblue",
     out_path: str | Path = None,
 ):
-    ax = df[column].sort_values(ascending=False).plot(
-        kind="bar", figsize=(8, 5), color=color
-    )
+   # Create the figure and axis explicitly
+    fig, ax = plt.subplots(figsize=(8, 5))
+    df[column].sort_values(ascending=False).plot(kind="bar", color=color, ax=ax)
+
     ax.set_title(title)
     ax.set_ylabel(ylabel)
     ax.set_xlabel("Sector (ETF)")
-    _save_or_show(out_path)
+    plt.tight_layout()
+
+    # If an output path is provided, save the figure
+    if out_path:
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out_path, bbox_inches="tight")
+        print(f"Saved plot: {out_path}")
+
+    # Return the figure (so Streamlit can render it)
+    return fig
 
 # Specific plots built using the function that I defined (_bar_plot)
 # Bar plot of mean annual returns for each ETF
 def plot_sector_mean(summary_df: pd.DataFrame, out_path: str | Path = None):
-    _bar_plot(summary_df, "MeanReturn", "Mean Annual Return (ETFs)", "Return", "skyblue", out_path)
+    return _bar_plot(
+        summary_df, "MeanReturn", "Mean Annual Return (ETFs)", "Return", "skyblue", out_path
+    )
 
 # Bar plot of annualized volatility for each ETF
 def plot_sector_volatility(summary_df: pd.DataFrame, out_path: str | Path = None):
-    _bar_plot(summary_df, "Volatility", "Annualized Volatility (ETFs)", "Volatility", "orange", out_path)
+     return _bar_plot(
+        summary_df, "Volatility", "Annualized Volatility (ETFs)", "Volatility", "orange", out_path
+    )
 
 # Bar plot of Sharpe ratios for each ETF
 def plot_sector_sharpe(summary_df: pd.DataFrame, out_path: str | Path = None):
-    _bar_plot(summary_df, "Sharpe", "Sharpe Ratio (ETFs)", "Sharpe", "mediumseagreen", out_path)
+     return _bar_plot(
+        summary_df, "Sharpe", "Sharpe Ratio (ETFs)", "Sharpe", "mediumseagreen", out_path
+    )
 
 # Heatmap showing pairwise correlations among ETFs
 def plot_sector_corr_heatmap(corr_df: pd.DataFrame, out_path: str | Path = None):
-    plt.figure(figsize=(5.5, 5))
+    fig, ax = plt.subplots(figsize=(5.5, 5))
     sns.heatmap(
         corr_df, annot=True, cmap="coolwarm",
-        vmin=-1, vmax=1, square=True, fmt=".2f"
+        vmin=-1, vmax=1, square=True, fmt=".2f", ax=ax
     )
-    plt.title("Correlation Matrix (ETFs)")
-    _save_or_show(out_path)
+    ax.set_title("Correlation Matrix (ETFs)")
+    plt.tight_layout()
+
+    if out_path:
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out_path, bbox_inches="tight")
+        print(f"Saved plot: {out_path}")
+    return fig
