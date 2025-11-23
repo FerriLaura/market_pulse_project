@@ -20,12 +20,12 @@ def fetch_prices(
 
     # Download data using yfinance (we keep only the "Close" prices and drop rows with missing values)
     df = yf.download(
-        tickers, period=period, interval=interval, auto_adjust=auto_adjust
+        tickers, period=DEFAULT_PERIOD, interval=DEFAULT_INTERVAL, auto_adjust=AUTO_ADJUST
     )["Close"].dropna()
 
     # Save data to a CSV file
     if save_csv:
-        # Create the target directory if it doesn't exist
+        # Create the directory if it doesn't exist
         p = Path(data_dir)
         p.mkdir(parents=True, exist_ok=True)
         # Define the full output file path
