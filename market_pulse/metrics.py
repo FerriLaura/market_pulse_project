@@ -1,6 +1,5 @@
 # Import libraries
 from pathlib import Path
-from typing import Optional
 import numpy as np
 import pandas as pd
 from .config import TRADING_DAYS_PER_YEAR, RISK_FREE_ANNUAL
@@ -20,7 +19,7 @@ def summarize_returns(
     trading_days: int = TRADING_DAYS_PER_YEAR,
     risk_free_annual: float = RISK_FREE_ANNUAL,
 ) -> pd.DataFrame:
-    # Safety check: ensure data is not empty 
+    # Safety check: ensure dataframe is not empty 
     if returns.empty:
         raise ValueError("returns is empty")
 
