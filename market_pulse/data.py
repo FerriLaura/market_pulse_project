@@ -20,7 +20,7 @@ def fetch_prices(
 
     # Download data using yfinance (we keep only the "Close" prices and drop rows with missing values)
     df = yf.download(
-        tickers, period=DEFAULT_PERIOD, interval=DEFAULT_INTERVAL, auto_adjust=AUTO_ADJUST
+        tickers, period=period, interval=interval, auto_adjust=auto_adjust
     )["Close"].dropna()
 
     # Save data to a CSV file
