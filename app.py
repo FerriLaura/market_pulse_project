@@ -9,19 +9,46 @@ ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
-from market_pulse.config import SECTOR_ETFS, DEFAULT_PERIOD, DEFAULT_INTERVAL, AUTO_ADJUST, TRADING_DAYS_PER_YEAR, RISK_FREE_ANNUAL
+from market_pulse.config import (
+    SECTOR_ETFS, 
+    DEFAULT_PERIOD, 
+    DEFAULT_INTERVAL, 
+    AUTO_ADJUST, 
+    TRADING_DAYS_PER_YEAR, 
+    RISK_FREE_ANNUAL,
+)
 from market_pulse.data import fetch_prices
-from market_pulse.metrics import compute_daily_returns, summarize_returns, correlation_matrix
+from market_pulse.metrics import (
+    compute_daily_returns, 
+    summarize_returns, 
+    correlation_matrix,
+)
 from market_pulse.visualization import (
-    plot_sector_mean, plot_sector_volatility, plot_sector_sharpe, plot_sector_corr_heatmap, plot_cumulative_returns,
+    plot_sector_mean, 
+    plot_sector_volatility, 
+    plot_sector_sharpe, 
+    plot_sector_corr_heatmap, 
+    plot_cumulative_returns,
 )
 
+# --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="Market Pulse (ETF)", layout="wide")
 
 st.title("Market Pulse — Sector ETFs")
-st.caption("Explore sector performance, risk and correlation using Yahoo Finance data (XLK, XLE, XLV).")
+st.caption(
+    "Explore sector performance, risk and correlation using Yahoo Finance data (Technology, Energy, Utilities, Healthcare and Financials).")
 
-# Sidebar controls 
+st.markdown(
+    """
+**What this app does**
+
+- Downloads historical prices for sector ETFs from Yahoo Finance  
+- Computes **annualised return**, **volatility** and **Sharpe ratio**  
+- Shows **correlation** and the **cumulative growth** of 1€ over time  
+"""
+)
+
+# --- Sidebar controls ---
 st.sidebar.header("Controls")
 
 # Choose ETFs (keys or tickers both ok)
@@ -77,7 +104,7 @@ if not selected:
     st.warning("Select at least one ETF to proceed.")
     st.stop()
 
-# DATA
+# --- DATA ---
 @st.cache_data(show_spinner=True, ttl=60*10)
 def load_prices(etfs, period, interval, auto_adjust, save_csv):
     df = fetch_prices(
@@ -96,42 +123,84 @@ with st.spinner("Downloading prices from Yahoo Finance…"):
 st.subheader("Prices (adjusted close)")
 st.dataframe(prices.tail())
 
-#  METRICS
+#  --- METRICS ---
 returns = compute_daily_returns(prices)
 summary = summarize_returns(returns, risk_free_annual=risk_free)
 corr = correlation_matrix(returns)
 
 # Show summary table
-st.subheader("Annualized Metrics")
+st.subheader("Annualised Metrics")
 st.caption("MeanReturn and Volatility are annualized (×252, ×√252). Sharpe uses the selected risk-free rate.")
 st.dataframe(summary.style.format({"MeanReturn": "{:.2%}", "Volatility": "{:.2%}", "Sharpe": "{:.2f}"}))
 
-#  PLOTS 
+# Small KPI cards
+best_return_ticker = summary["MeanReturn"].idxmax()
+best_return_value  = summary["MeanReturn"].max()
 
-# --- Sharpe Ratio ---
-st.markdown("### Sharpe Ratio (Annual)")
-fig = plot_sector_sharpe(summary)         # returns a Matplotlib Figure
-st.pyplot(fig)                            # <- pass the fig
+best_sharpe_ticker = summary["Sharpe"].idxmax()
+best_sharpe_value  = summary["Sharpe"].max()
 
-# --- Mean Return ---
-st.markdown("### Mean Annual Return")
-fig = plot_sector_mean(summary)
-st.pyplot(fig)
+most_risky_ticker  = summary["Volatility"].idxmax()
+most_risky_value   = summary["Volatility"].max()
 
-# --- Volatility ---
-st.markdown("### Volatility (Annual)")
-fig = plot_sector_volatility(summary)
-st.pyplot(fig)
+c1, c2, c3 = st.columns(3)
+c1.metric("Best return", 
+          f"{best_return_ticker}", 
+          f"{best_return_value:.1%}")
+c2.metric("Best Sharpe", 
+          f"{best_sharpe_ticker}", 
+          f"{best_sharpe_value:.2f}")
+c3.metric("Highest volatility", 
+          f"{most_risky_ticker}", 
+          f"{most_risky_value:.1%}")
 
-# --- Correlation ---
-st.markdown("### Correlation (Daily Returns)")
-fig = plot_sector_corr_heatmap(corr)
-st.pyplot(fig)
+#  --- PLOTS AND TABLES ---
+tab1, tab2, tab3, tab4, tab5 = st.tabs(
+    ["Summary charts", "Correlation", "Cumulative growth", "Prices", "Raw metrics"]
+)
 
-# --- Cumulative growth ---
-st.markdown("Cumulative Growth of 1€")
-st.caption("How 1€ invested in each sector ETF evolves over time.")
-fig = plot_cumulative_returns(returns)
-st.pyplot(fig)
+# --- TAB 1: Summary charts ---
+with tab1:
+    st.markdown("### Return, Volatility and Sharpe Ratio")
+
+    fig = plot_sector_mean(summary)
+    st.pyplot(fig)
+
+    fig = plot_sector_volatility(summary)
+    st.pyplot(fig)
+
+    fig = plot_sector_sharpe(summary)
+    st.pyplot(fig)
+
+# --- TAB 2: Correlation ---
+with tab2:
+    st.markdown("### Correlation (Daily Returns)")
+    fig = plot_sector_corr_heatmap(corr)
+    st.pyplot(fig)
+
+# --- TAB 3: Cumulative growth ---
+with tab3:
+    st.markdown("### Cumulative Growth of 1€")
+    st.caption("How 1€ invested in each sector ETF evolves over time.")
+    fig = plot_cumulative_returns(returns)
+    st.pyplot(fig)
+
+# --- TAB 4: Prices ---
+with tab4:
+    st.markdown("### Adjusted Close Prices (Last Rows)")
+    st.dataframe(prices.tail())
+
+# --- TAB 5: Raw metrics ---
+with tab5:
+    st.markdown("### Full Annualised Metrics")
+    st.dataframe(
+        summary.style.format(
+            {
+                "MeanReturn": "{:.2%}",
+                "Volatility": "{:.2%}",
+                "Sharpe": "{:.2f}",
+            }
+        )
+    )
 
 st.success("Done! Adjust parameters in the sidebar to explore different scenarios.")
