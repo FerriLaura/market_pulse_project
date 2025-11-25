@@ -2,7 +2,7 @@
 from pathlib import Path
 import yfinance as yf
 import pandas as pd
-from .config import DEFAULT_PERIOD, DEFAULT_INTERVAL, AUTO_ADJUST
+from .config import DEFAULT_PERIOD, DEFAULT_INTERVAL, AUTO_ADJUST, SECTOR_ETFS
 
 # Function to download price data from Yahoo Finance
 def fetch_prices(
@@ -23,6 +23,10 @@ def fetch_prices(
         tickers, period=period, interval=interval, auto_adjust=auto_adjust
     )["Close"].dropna()
 
+    # Rename tickers with sector names
+    sector_names = {v: k for k, v in SECTOR_ETFS.items()}
+    df = df.rename(columns=sector_names)
+    
     # Save data to a CSV file
     if save_csv:
         # Create the directory if it doesn't exist
