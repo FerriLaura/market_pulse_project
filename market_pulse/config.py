@@ -3,6 +3,8 @@ SECTOR_ETFS = {
     "Technology": "XLK",
     "Energy": "XLE",
     "Healthcare": "XLV",
+    "Financials": "XLF",
+    "Utilities": "XLU",
 }
 
 # Default configuration values
