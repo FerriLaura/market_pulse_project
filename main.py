@@ -11,7 +11,8 @@ from market_pulse.visualization import (
     plot_sector_mean,
     plot_sector_volatility,
     plot_sector_corr_heatmap,
-    plot_sector_sharpe
+    plot_sector_sharpe,
+    plot_cumulative_returns
 )
 
 def main():
@@ -45,6 +46,7 @@ def main():
     plot_sector_volatility(summary,  "outputs/sector_volatility_etf.png")
     plot_sector_sharpe(summary,      "outputs/sector_sharpe_etf.png")
     plot_sector_corr_heatmap(corr,   "outputs/sector_corr_heatmap_etf.png")
+    plot_cumulative_returns(returns, "outputs/sector_cumulative_returns.png")
 
     print("ETF pipeline completed")
 

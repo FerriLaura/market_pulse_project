@@ -13,7 +13,7 @@ from market_pulse.config import SECTOR_ETFS, DEFAULT_PERIOD, DEFAULT_INTERVAL, A
 from market_pulse.data import fetch_prices
 from market_pulse.metrics import compute_daily_returns, summarize_returns, correlation_matrix
 from market_pulse.visualization import (
-    plot_sector_mean, plot_sector_volatility, plot_sector_sharpe, plot_sector_corr_heatmap
+    plot_sector_mean, plot_sector_volatility, plot_sector_sharpe, plot_sector_corr_heatmap, plot_cumulative_returns,
 )
 
 st.set_page_config(page_title="Market Pulse (ETF)", layout="wide")
@@ -36,11 +36,38 @@ selected = st.sidebar.multiselect(
     format_func=lambda t: f"{etf_labels.get(t, t)} ({t})"
 )
 
-period = st.sidebar.selectbox("Period", ["1y", "2y", "3y", "5y"], index=["1y","2y","3y","5y"].index(DEFAULT_PERIOD) if DEFAULT_PERIOD in ["1y","2y","3y","5y"] else 0)
-interval = st.sidebar.selectbox("Interval", ["1d", "1wk", "1mo"], index=["1d","1wk","1mo"].index(DEFAULT_INTERVAL) if DEFAULT_INTERVAL in ["1d","1wk","1mo"] else 0)
-risk_free = st.sidebar.slider("Risk-free rate (annual)", 0.0, 0.05, float(RISK_FREE_ANNUAL), 0.001)
+# period selection
+period = st.sidebar.selectbox(
+    "Period", 
+    ["1y", "2y", "3y", "5y"], 
+    index=["1y","2y","3y","5y"].index(DEFAULT_PERIOD) 
+    if DEFAULT_PERIOD in ["1y","2y","3y","5y"] 
+    else 0
+)
 
-save_csv = st.sidebar.checkbox("Save downloaded prices to data/", value=True)
+# interval selection (frequency of price data)
+interval = st.sidebar.selectbox(
+    "Interval", 
+    ["1d", "1wk", "1mo"], 
+    index=["1d","1wk","1mo"].index(DEFAULT_INTERVAL) 
+        if DEFAULT_INTERVAL in ["1d","1wk","1mo"] 
+        else 0
+)
+
+# risk_free slider
+risk_free = st.sidebar.slider(
+    "Risk-free rate (annual)", 
+    0.0, 
+    0.05, 
+    float(RISK_FREE_ANNUAL),
+    0.001
+)
+
+# save prices to checkbox
+save_csv = st.sidebar.checkbox(
+    "Save downloaded prices to data/", 
+    value=True
+)
 
 st.sidebar.markdown("---")
 st.sidebar.write("Trading days/year:", TRADING_DAYS_PER_YEAR)
@@ -101,5 +128,10 @@ st.markdown("### Correlation (Daily Returns)")
 fig = plot_sector_corr_heatmap(corr)
 st.pyplot(fig)
 
+# --- Cumulative growth ---
+st.markdown("Cumulative Growth of 1€")
+st.caption("How 1€ invested in each sector ETF evolves over time.")
+fig = plot_cumulative_returns(returns)
+st.pyplot(fig)
 
 st.success("Done! Adjust parameters in the sidebar to explore different scenarios.")

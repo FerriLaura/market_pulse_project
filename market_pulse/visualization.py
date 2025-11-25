@@ -68,6 +68,19 @@ def plot_sector_corr_heatmap(corr_df: pd.DataFrame, out_path: str | Path = None)
     ax.set_title("Correlation Matrix (ETFs)")
     plt.tight_layout()
 
+# Cumulative growth of 1 euro per ETF
+# start from 1 then multiply by (1 + daily return)
+def plot_cumulative_returns(returns: pd.DataFrame, out_path: str | Path = None):
+    growth = (1 + returns).cumprod() # turn daily returns into a cumulative growth index
+    fig, ax = plt.subplots(figsize=(8,5)) # create the figure
+    growth.plot(ax=ax) # plot all ETFs
+
+    ax.set_title("Cumulative Growth of 1€ by Sector ETF")
+    ax.set_ylabel("Growth of 1€")
+    ax.set_xlabel("Date")
+    plt.tight_layout()
+
+# save to file
     if out_path:
         Path(out_path).parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(out_path, bbox_inches="tight")
