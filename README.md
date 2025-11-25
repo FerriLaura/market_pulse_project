@@ -1,67 +1,77 @@
 # Market Pulse
-
-**Market Pulse** explores the behavior of different stock market sectors using historical data from Yahoo Finance.
-In particular, performance (returns), risk (volatility), risk-adjusted performance (Sharpe ratio) and co-movement between sectors (correlation) were analyzed during the project.
-
+*An analysis of sector performance, risk and correlation i U.S. markets*
 
 ---
+**Market Pulse** is a project that explores the behavior of different stock market sectors using historical price data from Yahoo Finance.
+In particular,the project explores: 
+- sector performance (returns)  
+- sector risk (volatility)  
+- risk-adjusted performance (Sharpe ratio)  
+- interdependence between sectors (correlation)  
+- cumulative growth over time  
+- interactive exploration through a Streamlit web application
 
+---
 ## Project's goals
 
-The goals of this project are the following:
-- Fetch and clean real stock data using the 'yfinance' API;
-- Compute daily returns, annualized mean returns, mean variance, volatility and Sharpe ratio;
-- Compare risk-return profile across three different sectors: healthcare, technology and energy; 
-- Visualize relationship through correlation heatmaps and summary plots.
+- Retrieve and clean real market data using yfinance 
+- Compute daily returns and annualized financial metrics  
+- Compare risk–return profiles across sectors  
+- Analyze sector relationships with correlation matrices  
+- Build interpretable visualizations using Matplotlib and Seaborn  
+- Provide an interactive web dashboard built with Streamlit  
+- Explore diversification effects within the U.S. equity market  
 
+---
+## **IMPORTANT!**: Project evolution and Branches
+This repository intentionally contains two branches, documenting the full methodological development.
+### 1. main - Initial Version (Based on individual stock aggregation)
 **Sectors analyzed**
-This project focuses on three major sectors of the U.S. stock market - Technology, Energy and Healthcare - to compare their performance, risk, and interdipendence. 
-These sectors were selected because they have different market dynamics and distinct risk-return profile.  
+The first approach attempted to reconstruct sectors by aggregating the returns of individual tickers, considered representative for a particular sector (for example AAPL and MSFT for Technology).  
+This approach encountered some methodological problems concerning the aggregation method: 
+- The first idea, was to use an equal-weighted aggregation, in which the sector returns were computed as the average of all tickers. But this introduces a bias because real sectors are not equally weighted. 
+- The second attempt consisted in trying to use a market-capitalization weighting. Unfortunately, also this method failed because the data are about current market capitalizations and historical weights cannot be reconstructed retroactively (even if the sector composition changes over time). This also creates historical inconsistencies and a strong bias. 
 
-For each sector, I selected three of the largest and most traded companies. 
-So each sector was represented by three tickers: 
-- Technology was represented by Apple (AAPL), Microsoft (MSFT) and Invidia (NVDA); 
-- Energy was represented by Exxon Mobil Corp(XOM), Chevron Corporation (CVX) and ConocoPhilips (COP);
-- Healthcare was represented by Johnson & Johnson (JNJ), Pfizer (PFE), AbbVie (ABBV).
+As a result, the ticker-based sector reconstruction in main is methodologically invalid. It was kept for transparency and to show the evolution of the project.
 
-All of these are included in major indices as S&P 500 and Dow Jones, they are highly liquid and strongly representatives of their sector's performance. 
+### 2. etf-version - correct version 
+To fix the scientific problems in the first version, the project was changed using official sector ETFs. 
+This approach is correct beacuse ETFs use true historical sector compositions and incorporate all index rebalancing.
+That's why, the etf-version branch is now the official and complete version of the project, including Streamlit Web application and all final improvements.
 
+Both branches remain in the repository intentionally:
+	- main shows the original attempt, demonstrating understanding of sector construction and statistical aggregation issues.
+	- etf-version shows the final corrected methodology, using real market products and eliminating aggregation bias.
+
+---
 ## Project structure 
 market_pulse_project/
 │
-├── market_pulse/                # Core source package
-│   ├── init.py
-│   ├── config.py                # Global constants, sector mapping
-│   ├── data.py                  # Data download and storage
-│   ├── metrics.py               # Computations (returns, volatility, correlation)
-│   └── visualization.py         # Plotting utilities
+├── market_pulse/
+│   ├── config.py          # Global configuration (ETFs, periods, parameters)
+│   ├── data.py            # Fetching ETF price data from Yahoo Finance
+│   ├── metrics.py         # Returns, volatility, Sharpe ratio, correlations
+│   ├── visualization.py   # Matplotlib and Seaborn charts
 │
-├── main.py                      # Orchestrates the full pipeline
-│
-├── data/                        # Generated prices
-├── outputs/                     # Summary tables & plots
-├── requirements.txt
-├── README.md
-└── .gitignore
+├── outputs/               # Automatically saved plots and CSVs
+├── data/                  # Downloaded price data
+├── app.py                 # Streamlit web application 
+├── main.py                # Script version of the pipeline
+├── README.md              # explains the project's goals, structure, methods, and results
+└── requirements.txt       # Python dependencies
 
 The project follows the structure that was just presented. 
-- market_pulse/ -> this is the source package, containing all the core Python modules that perform the analysis. 
-    - config.py -> stores global constants and configuration variables, such as sector mappings and default parameters for data fetching; 
-    - data.py -> handles data collection and storage. It uses the yfinance API to download historical stock prices, clean them and save them as CSV files in the data/ folder. 
-    - metrics.py -> contains the mathematical and statisticak comptations. It calculates daily returns, annualized mean, returns, volatility, variance, and correlations, both at the ticker and sector level. The results are saved in the outputs/ folder as CSV files.
-    - visualization.py -> generates visual outputs like bar charts (for mean and volatility at the sector level) and heatmaps (for correlations between the three levels analyzed). Also these plots are saved in the outputs/ folder.
-- scripts/ -> it's a folder that contains main.py, the orchestration script. 
-    - The script integrates all components: it calls the functions from config.py, data.py, metrics.py and visualization.py in sequence to run the full analysis pipeline automatically.
-- data/ -> automatically created to store downloaded stock price data in CSV format. 
-- outputs/ -> contains the results of the analysis, such as summary tables (.csv) and visualizations (.png).
-- requirements.txt -> lists all python dependencies required to reproduce the environment.
-- .gitignore -> specifies files and folders (like .venv/ or /data/) that should not be tracked by Git. 
-- README.md -> explains the project's goals, structure, methods, and results.
-
-### Branches
-In the project, there are two different benaches: 
-- main is the early version of the project, in which sectors were characterized by baskets of stocks, equally-weighted. This was the first idea to develop the project, but it is strongly biased. 
-- the etf-version is the second branch of the project: the final version. Sectors are directly represented by ETFs, so that there are not problemns linked to weighting of the tickers that compose sectors. 
+•	market_pulse/ — core source package 
+	•	config.py — defines ETF tickers, default period/interval, constants such as TRADING_DAYS_PER_YEAR and RISK_FREE_ANNUAL
+	•	data.py — handles data collection via yfinance, cleaning, and CSV export
+	•	metrics.py — computes daily returns, annualized mean, volatility, Sharpe ratio, and correlation matrix
+	•	visualization.py — builds all plots (mean, volatility, Sharpe, correlation, cumulative growth)
+•	main.py — orchestration script: runs the full pipeline (data → metrics → plots)
+•	app.py — Streamlit web app for interactive exploration
+•	data/ — downloaded prices (created automatically)
+•	outputs/ — CSVs and PNG plots generated by the pipeline
+•	requirements.txt — list of Python dependencies
+•	.gitignore — excludes e.g. .venv/, __pycache__/, data/ from version control
 
 ## Project methods 
 This project follows a structured pipeline that transforms raw financial data into quantitative insights about sector preformance, risk and interdipendence. 
@@ -70,32 +80,39 @@ Each part of the process - data collection, computation, and visualization - is 
 ### 1. Data collection
 Historical stock price data were retrieved directly from Yahoo Finance using the yfinance Python library. The data.py script fetches daily adjusted closing prices for each selected ticker over the past year. 
 Key parameters are fixed on the config.py module: 
-- period: 1 years
+- period: 1 year
 - interval: daily
 - auto adjust: enabled to account for stock splits and dividends
+- Sector ETFs considered: 
+    - Technology (XLK)
+    - Energy (XLE)
+    - Healthcare (XLV)
+    - Financials (XLF)
+    - Utilities (XLU)
 
 In data.py script, a function called fetch_prices() is defined to download and organize the price data. 
 This function: 
-- takes as input a list of tickers (the ones defined in config.py);
+- takes as input a list of ETF (the ones defined in config.py);
 - downloads their adjusted closing prices over the selected period;
 - cleans missing data;
 - saves the resulting table as a CSV file in the data/ folder. 
 
-This creates a structured dataset where: each row corresponds to a trading day; each column corresponds to a company ticker and each value is the adjusted closing price for that day.
+This creates a structured dataframe where: each row corresponds to a trading day; each column corresponds to a company ticker and each value is the adjusted closing price for that day.
 
-### 2. Retutn computation
+### 2. Daily return computation
 Once the price data are available, the next step (implemented in metrics.py) is to compute daily returns, which represents the day-to-day percentage change in stock prices. 
 The formula is: Rt=(Pt-Pt-1)/Pt-1
 This is done automatically in this project using the pandas method .pct_change().
 Daily returns are the foundation for all sebsequent financial metrics because they quantify how much one price moves from one day to the next. 
+Daily returns are fundamental building block for: volatility, Sharpe ratio, correlations and cumulative growth.
 
 
-### 3. Performance and risk metrics
-Next, the project computes key financial metrics for each sector: 
-- mean annual return, which measures expected performance; 
-- volatility: which measures risk or uncertainty (standard deviation of returns);
+### 3. Performance and Risk Metrics
+Next, the project computes key financial metrics for each sector. The function summarize_returns() in metrics.py computes, for each etf: 
+- Annualized Mean Return, which measures expected performance; 
+- Annualized Volatility: which measures risk or uncertainty (standard deviation of returns);
 - variance: which represents the spread of returns (square of volatility);
-- Sharpe ratio: measures risk-adjusted performance (how much excess return a sector generates per unit of risk).
+- Sharpe Ratio: that measures risk-adjusted performance (how much excess return a sector generates per unit of risk). 
 
 To annualize the metrics, the script assumes 252 trading days per year (that is the average number of business days in financial markets).
 
@@ -104,7 +121,7 @@ Annualized volatility = daily volatility * radq(252)
 
 The Sharpe ratio is computed as: 
 Sharpe Ratio = (mean annual return - Rf)/Volatility
-where Rf is the risk-free rate, set to 2%, consistent with typical short-term Treasury yields.
+where Rf is the risk-free rate, set to 2%, consistent with typical short-term Treasury yields. This value can be changed from 0% to 5% in the Streamlit Web Application.
 
 The results are saved in outputs/sector_summary.csv. 
 
@@ -123,31 +140,84 @@ The following files can be found in the outputs' folder:
 - sector_corr.csv -> is the correlation matrix between the three sectors.
 
 ### 5. Visualization
-The visualization.py script turns the results into clear and interpretable charts: 
+The visualization.py script turns the results into charts: 
 - mean return bar chart (sector_mean.png): compares average performance across sectors; 
 - volatility bar chart (sector_volatility.png): shows relative sector risk; 
 - Sharpe ratio bar chart (sector_sharpe.png): visualizes which sectors achieved the best risk-adjusted performance;
 - Correlation heatmap (sector_corr_heatmap.png): highlights how strongly sectors move together.
-All plots are automatically saved as PNG files in the outputs/ folder.
+All plots are automatically saved as PNG files in the outputs/ folder; 
+- Cumulative Return Plot (sector_cumulative_return): simulates investing 1€  in each ETF and shows how this evolves over time for each sector.
 
-By combining automated data collection, statistical computation and visualization, the project provieds a complete picture of hoe different sectors perform and interact over time.
+All figures are saved under outputs/ when running the pipeline script.
 
-### 6. Full pipeline
+### 6. Full pipeline (main.py)
 main.py is the orchestration script. It generates the entire workflow from data collection to final visualization.
 
+### 7. Streamlit Web Application
+The Streamlit app (app.py) provides an interactive interface:
+
+Features
+	•	choose which ETFs to include
+	•	select period (1y, 2y, 3y, 5y)
+	•	choose price interval (1d, 1wk, 1mo)
+	•	adjust the risk-free rate with a slider
+	•	see live-updated:
+	    •	price table
+	    •	annualized metrics
+	    •	bar charts (Mean, Volatility, Sharpe)
+	    •	correlation heatmap
+	    •	cumulative return curves
+
+To run the app, from the project root paste: streamlit run app.py
+
+---
 ## Interpretation of results
-The analysis of the three sector ETFs — XLK (Technology), XLE (Energy), and XLV (Healthcare) — reveals distinct performance and risk characteristics over the analyzed period. The Technology sector (XLK) shows the strongest results, with an annualized mean return of about 28% and a Sharpe ratio close to 1, indicating excellent risk-adjusted performance. This means that technology stocks have delivered high returns relative to their volatility, efficiently compensating investors for the risk taken.
 
-In contrast, the Energy sector (XLE) exhibits high volatility (~24%) but a slightly negative mean return (−0.5%), leading to a negative Sharpe ratio. This suggests that energy investors faced considerable risk without corresponding returns — likely reflecting the recent instability of oil markets and cyclical price pressures in the energy industry.
+### 1. Sector Performance (Mean Annual Return)
+The Technology sector (XLK) clearly outperforms all others, delivering the highest annual return and reflecting strong growth momentum. In contrast, Energy (XLE) shows almost no positive return over the period, making it the weakest performer, while Utilities (XLU), Healthcare (XLV), and Financials (XLF) provide moderate but stable gains.
 
-The Healthcare sector (XLV) presents the lowest volatility (~17%), confirming its defensive nature, but its mean return (~1.6%) and near-zero Sharpe ratio indicate that it barely outperformed the risk-free benchmark. Healthcare thus behaved as a stable but low-return sector, providing balance rather than growth.
+---
 
-Overall, Technology was the best-performing and most efficient sector, Energy underperformed despite its risk, and Healthcare offered stability with limited upside. These results are consistent with market trends in which growth-oriented sectors have outpaced more cyclical or defensive ones during periods of economic recovery and investor optimism.
+### 2. Sector Risk (Volatility)
+Technology (XLK) and Energy (XLE) exhibit the highest volatility, indicating that they experience larger price fluctuations and therefore carry higher market risk. Defensive sectors like Healthcare (XLV) and Utilities (XLU) show the lowest volatility, confirming their traditionally more stable and less cyclical behavior. Financials (XLF) sit in the middle, reflecting moderate sensitivity to macroeconomic conditions.
 
-All Sharpe ratios in this analysis were computed assuming a 2% annual risk-free rate, which approximates the return on short-term U.S. Treasury bills — a common benchmark in financial analysis. This adjustment ensures that sector performance is measured relative to a virtually riskless investment, helping to determine whether the additional risk taken in each sector is adequately rewarded.
+---
+### 3. Risk-Adjusted Performance (Sharpe Ratio)
+The Sharpe Ratio ranking shows that Technology (XLK) and Utilities (XLU) offer the best risk-adjusted performance, meaning they generate the most excess return per unit of risk taken. Healthcare (XLV) performs moderately well, providing solid and stable risk-adjusted returns. In contrast, Financials (XLF) and especially Energy (XLE) deliver weak or negative Sharpe ratios, indicating that their returns do not compensate sufficiently for the level of risk borne by investors.
 
-All three sectors show positive but moderate correlations, indicating that they tend to rise and fall together in broad market cycles, but still offer some diversification benefits when combined in a portfolio.
-	•	Technology (XLK) and Energy (XLE) share the highest correlation, meaning they are more likely to react similarly to macroeconomic conditions such as GDP growth or inflation expectations.
-	•	Healthcare (XLV) remains the most independent sector, with lower correlations to both technology and energy — confirming its traditional role as a defensive, less market-sensitive component in a diversified portfolio.
+---
+### 4. Correlation Structure and Diversification
+Highest correlations appear between Financials and both Technology (0.69) and Energy (0.62). This suggests that financial markets tend to react similarly to macroeconomic drivers affecting growth and commodity-sensitive sectors.
+On the contrary, Utilities show lower correlations with all other sectors, confirming its defensive nature and reduced sensitivity to economic cycles.
+Healthcare also maintains moderate but lower correlations, particularly with Technology (0.37), making it another defensive component that behaves more independently from growth-led sectors.
 
-The correlation structure suggests that while these ETFs are all part of the broader equity market, they respond differently to economic forces. A portfolio combining Technology, Energy, and Healthcare ETFs would therefore benefit from risk reduction through diversification, without sacrificing exposure to both growth and defensive market segments.
+Overall, the structure indicates that while U.S. sectors share broad market exposure, Utilities and Healthcare offer meaningful diversification, while Financials, Energy, and Technology move more tightly together, reflecting common macroeconomic influences.
+---
+
+### 5. Cumulative Growth 
+The cumulative-return curves show that Technology (XLK) strongly outperformed all other sectors, steadily compounding gains after mid-year, while Utilities (XLU) also grew but more moderately.
+In contrast, Energy (XLE), Healthcare (XLV), and Financials (XLF) remained mostly flat, showing weaker momentum and sharper drawdowns, indicating lower trend persistence over the period.
+
+---
+
+### 6. Limitations and Critical Remarks
+
+There are some critical points that we have to consider while interpreting the results of the analysis: 
+
+- **Sample dependence**:  
+  - Results are contingent on the chosen time window (e.g., 1 year).  
+  - Different periods (e.g., crisis vs expansion) may lead to **different rankings** of sectors.
+
+- **Single asset class**:  
+  - Only U.S. sector equities are considered; no bonds, commodities, or international diversification.  
+
+- **No transaction costs or frictions**:  
+  - The analysis abstracts from fees, bid-ask spreads, and slippage.  
+  - Real-world implementation would slightly reduce realized returns, especially for more volatile or heavily traded sectors.
+
+---
+
+### 7. Overall Conclusion
+
+Across all analyses, clear differences emerge in performance, risk, and behavior among the five sector ETFs. Technology (XLK) consistently stands out as the strongest sector: it delivers the highest annualized return, maintains a favorable risk–return balance, and dominates the cumulative growth chart—indicating persistent upward momentum throughout the period. Utilities (XLU) also perform well on a risk-adjusted basis, offering moderate returns with relatively low volatility, confirming their role as a stable defensive sector. Healthcare (XLV) shows restrained performance and moderate risk, behaving as a stabilizing component rather than a return driver. Financials (XLF) provide modest returns with mid-level volatility, placing them in the middle of the risk–reward spectrum. Energy (XLE) underperforms overall, combining elevated volatility with nearly flat returns and the lowest Sharpe ratio.
+A mixed-sector portfolio would therefore balance long-term growth potential with volatility reduction, leveraging the complementary risk profiles of these ETFs.
