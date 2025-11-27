@@ -1,7 +1,7 @@
 # Market Pulse
 *An analysis of sector performance, risk and correlation i U.S. markets*
 
----
+
 **Market Pulse** is a project that explores the behavior of different stock market sectors using historical price data from Yahoo Finance.
 In particular,the project explores: 
 - sector performance (returns)  
@@ -11,7 +11,7 @@ In particular,the project explores:
 - cumulative growth over time  
 - interactive exploration through a Streamlit web application
 
----
+
 ## Project's goals
 
 - Retrieve and clean real market data using yfinance 
@@ -22,7 +22,7 @@ In particular,the project explores:
 - Provide an interactive web dashboard built with Streamlit  
 - Explore diversification effects within the U.S. equity market  
 
----
+
 ## **IMPORTANT!** Project evolution and Branches
 This repository intentionally contains two branches, documenting the full methodological development.
 ### 1. main - Initial Version (Based on individual stock aggregation)
@@ -43,7 +43,7 @@ Both branches remain in the repository intentionally:
 	- main shows the original attempt, demonstrating understanding of sector construction and statistical aggregation issues.
 	- etf-version shows the final corrected methodology, using real market products and eliminating aggregation bias.
 
----
+
 ## Project structure 
 market_pulse_project/
 │
@@ -73,8 +73,8 @@ The project follows the structure that was just presented.
 •	requirements.txt — list of Python dependencies
 •	.gitignore — excludes e.g. .venv/, __pycache__/, data/ from version control
 
----
-## Data sources
+
+## Data Sources
 Data were retrieved by using Yahoo Financce (yfinance). 
 The price series that were considered are the ones that include adjusted close prices. 
 ETFs analyzed:
@@ -84,7 +84,7 @@ ETFs analyzed:
 	•	XLF — Financials
 	•	XLU — Utilities
 
----
+
 ## Main Libraries
 All dependencies are listed in requirements.txt
 The main libraries used are: 
@@ -94,7 +94,7 @@ The main libraries used are:
 	•	yfinance — data retrieval
 	•	streamlit — interactive dashboard
 
----
+
 ## How to run the project
 Clone the repository: 
 git clone https://github.com/FerriLaura/market_pulse_project.git
@@ -112,6 +112,7 @@ python -m main
 
 Run the streamlit web application: 
 streamlit run app.py
+
 
 ## Project methods 
 This project follows a structured pipeline that transforms raw financial data into quantitative insights about sector preformance, risk and interdipendence. 
@@ -210,22 +211,18 @@ Features
 
 To run the app, from the project root paste: streamlit run app.py
 
----
+
 ## Interpretation of results
 
 ### 1. Sector Performance (Mean Annual Return)
 The Technology sector (XLK) clearly outperforms all others, delivering the highest annual return and reflecting strong growth momentum. In contrast, Energy (XLE) shows almost no positive return over the period, making it the weakest performer, while Utilities (XLU), Healthcare (XLV), and Financials (XLF) provide moderate but stable gains.
 
----
-
 ### 2. Sector Risk (Volatility)
 Technology (XLK) and Energy (XLE) exhibit the highest volatility, indicating that they experience larger price fluctuations and therefore carry higher market risk. Defensive sectors like Healthcare (XLV) and Utilities (XLU) show the lowest volatility, confirming their traditionally more stable and less cyclical behavior. Financials (XLF) sit in the middle, reflecting moderate sensitivity to macroeconomic conditions.
 
----
 ### 3. Risk-Adjusted Performance (Sharpe Ratio)
 The Sharpe Ratio ranking shows that Technology (XLK) and Utilities (XLU) offer the best risk-adjusted performance, meaning they generate the most excess return per unit of risk taken. Healthcare (XLV) performs moderately well, providing solid and stable risk-adjusted returns. In contrast, Financials (XLF) and especially Energy (XLE) deliver weak or negative Sharpe ratios, indicating that their returns do not compensate sufficiently for the level of risk borne by investors.
 
----
 ### 4. Correlation Structure and Diversification
 Highest correlations appear between Financials and both Technology (0.69) and Energy (0.62). This suggests that financial markets tend to react similarly to macroeconomic drivers affecting growth and commodity-sensitive sectors.
 On the contrary, Utilities show lower correlations with all other sectors, confirming its defensive nature and reduced sensitivity to economic cycles.
@@ -233,14 +230,12 @@ Healthcare also maintains moderate but lower correlations, particularly with Tec
 
 Overall, the structure indicates that while U.S. sectors share broad market exposure, Utilities and Healthcare offer meaningful diversification, while Financials, Energy, and Technology move more tightly together, reflecting common macroeconomic influences.
 
----
 ### 5. Cumulative Growth 
 The cumulative-return curves show that Technology (XLK) strongly outperformed all other sectors, steadily compounding gains after mid-year, while Utilities (XLU) also grew but more moderately.
 In contrast, Energy (XLE), Healthcare (XLV), and Financials (XLF) remained mostly flat, showing weaker momentum and sharper drawdowns, indicating lower trend persistence over the period.
 
----
 
-### 6. Limitations and Critical Remarks
+## Limitations and Critical Remarks
 
 There are some critical points that we have to consider while interpreting the results of the analysis: 
 
@@ -255,9 +250,9 @@ There are some critical points that we have to consider while interpreting the r
   - The analysis abstracts from fees, bid-ask spreads, and slippage.  
   - Real-world implementation would slightly reduce realized returns, especially for more volatile or heavily traded sectors.
 
----
 
-### 7. Overall Conclusion
+
+## Overall Conclusion
 
 Across all analyses, clear differences emerge in performance, risk, and behavior among the five sector ETFs. Technology (XLK) consistently stands out as the strongest sector: it delivers the highest annualized return, maintains a favorable risk–return balance, and dominates the cumulative growth chart—indicating persistent upward momentum throughout the period. Utilities (XLU) also perform well on a risk-adjusted basis, offering moderate returns with relatively low volatility, confirming their role as a stable defensive sector. Healthcare (XLV) shows restrained performance and moderate risk, behaving as a stabilizing component rather than a return driver. Financials (XLF) provide modest returns with mid-level volatility, placing them in the middle of the risk–reward spectrum. Energy (XLE) underperforms overall, combining elevated volatility with nearly flat returns and the lowest Sharpe ratio.
 A mixed-sector portfolio would therefore balance long-term growth potential with volatility reduction, leveraging the complementary risk profiles of these ETFs.
