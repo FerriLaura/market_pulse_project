@@ -1,3 +1,16 @@
+"""Main script to run the full ETF analysis pipeline.
+
+This script executes the full workflow of the Market Pulse project:
+- downloads ETF price data from Yahoo Finance
+- computes daily returns
+- calculates annualised performance and risk metrics
+- generates correlation matrices
+- saves all results to CSV files
+- generates and exports all visualizations
+
+Running this file produces the complete set of outputs under /outputs/.
+"""
+
 # Imports
 from market_pulse.config import SECTOR_ETFS, DEFAULT_PERIOD, DEFAULT_INTERVAL, AUTO_ADJUST, RISK_FREE_ANNUAL
 from market_pulse.data import fetch_prices
@@ -16,9 +29,23 @@ from market_pulse.visualization import (
 )
 
 def main():
-    # Definition of the ETFs to analyze
+    """Run the full sector ETF analysis pipeline.
+
+    Steps:
+        1. Select ETFs defined in config.py.
+        2. Download adjusted close prices.
+        3. Compute daily returns.
+        4. Compute annualised mean return, volatility, and Sharpe ratio.
+        5. Compute correlation matrix.
+        6. Save results as CSV files.
+        7. Generate all plots and save them to /outputs/.
+
+    All outputs are saved automatically. No return value.
+    """
+    # definition of the ETFs to analyze
     etfs = list(SECTOR_ETFS.values())
-    # Download data
+    
+    # download ETF price data
     prices = fetch_prices(
         etfs,
         period=DEFAULT_PERIOD,
@@ -28,11 +55,9 @@ def main():
         fname="etf_prices.csv"
     )
 
-    # Rename columns ETF->sector for nicer plots (XLK->Technology, ...)
-    # prices = prices.rename(columns={v: k for k, v in SECTOR_ETFS.items()})
-
     # Compute daily returns
     returns    = compute_daily_returns(prices)
+    
     # Compute summary metrics
     summary = summarize_returns(returns, risk_free_annual=RISK_FREE_ANNUAL)
     corr    = correlation_matrix(returns)

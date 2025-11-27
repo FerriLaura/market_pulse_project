@@ -1,10 +1,15 @@
+"""
+Data loading utilities for the Market Pulse project.
+The output of this module is useful to compute metrics and visualizations in the project.
+"""
+
 # Import libraries
 from pathlib import Path
 import yfinance as yf
 import pandas as pd
 from .config import DEFAULT_PERIOD, DEFAULT_INTERVAL, AUTO_ADJUST, SECTOR_ETFS
 
-# Function to download price data from Yahoo Finance
+
 def fetch_prices(
     tickers,                             # List of ticker symbols
     period=DEFAULT_PERIOD,               # How far back to fetch data (1 year)
@@ -14,29 +19,41 @@ def fetch_prices(
     data_dir="data",                     # Directory where the CSV will be stored
     fname="prices.csv",                  # Output file name: prices.csv
 ) -> pd.DataFrame:                       # The function returns a pandas DataFrame
-    
-    # Print a message to show which tickers are being downloaded
+    """
+    This function downloads ETF prices from Yahoo Finance and returns a price table.
+
+    Prices are downloaded from Yahoo Finance via `yfinance.download`.
+    Only the adjusted close prices are kept, and rows with missing values
+    are dropped. Columns are renamed from ticker symbols to sector names
+    using the `SECTOR_ETFS` mapping (if available).
+
+    Args:
+        tickers (list[str]): List of ticker symbols to download
+        period (str): Lookback period for the download
+        interval (str): Sampling frequency of the data
+        auto_adjust (bool): Whether to auto-adjust prices for splits and dividends.
+        save_csv (bool): If True, save the downloaded data to CSV.
+        data_dir (str): Folder where the CSV will be written.
+        fname (str): Name of the CSV file.
+
+    Returns:
+        pd.DataFrame: DataFrame of adjusted close prices, one column for each ETF.
+    """
+
     print(f"Downloading: {', '.join(tickers)}")
 
-    # Download data using yfinance (we keep only the "Close" prices and drop rows with missing values)
     df = yf.download(
         tickers, period=period, interval=interval, auto_adjust=auto_adjust
     )["Close"].dropna()
 
-    # Rename tickers with sector names
     sector_names = {v: k for k, v in SECTOR_ETFS.items()}
     df = df.rename(columns=sector_names)
     
     # Save data to a CSV file
     if save_csv:
-        # Create the directory if it doesn't exist
         p = Path(data_dir)
         p.mkdir(parents=True, exist_ok=True)
-        # Define the full output file path
         out = p / fname
-        # Save the DataFrame to CSV format
         df.to_csv(out)
-        # Confirm that the file was saved and where
         print(f"Saved {out}")
-    # Return the DataFrame for further analysis
     return df

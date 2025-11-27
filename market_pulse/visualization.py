@@ -1,3 +1,10 @@
+"""
+Visualization utilities for sector ETF analysis.
+
+This module contains functions to generate bar charts, heatmaps,
+and cumulative return plots used throughout the project.
+"""
+
 # Imports
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -9,6 +16,11 @@ def _maybe_save(fig, out_path: str | Path | None) -> None:
     """
     Save the Matplotlib figure to 'out_path' if not None.
     Does nothing if out_path is None.
+
+    Args:
+        fig: Matplotlib Figure object to save.
+        out_path (str | Path | None): File path where the figure should be saved.
+            If None, the figure is not saved.
     """
     if out_path:
         out_path = Path(out_path)
@@ -27,8 +39,18 @@ def _bar_plot(
     out_path: str | Path = None,
 ):
     """
-    Create a bar chart for a single column of a DataFrame and return the figure.
-    Optionally saves the figure if 'out_path' is given.
+    Create a bar chart for a selected column of a summary DataFrame.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing summary statistics.
+        column (str): Column to visualize (e.g. 'MeanReturn').
+        title (str): Chart title.
+        ylabel (str): Label for the y-axis.
+        color (str): Color of the bars.
+        out_path (str | Path | None): Optional path to save the plot.
+
+    Returns:
+        Figure: The Matplotlib figure object.
     """
     fig, ax = plt.subplots(figsize=(8, 5))
     df[column].sort_values(ascending=False).plot(kind="bar", color=color, ax=ax)
@@ -41,29 +63,38 @@ def _bar_plot(
     _maybe_save(fig, out_path)
     return fig 
 
-# Specific plots built using the function that I defined (_bar_plot)
-# Bar plot of mean annual returns for each ETF
+
 def plot_sector_mean(summary_df: pd.DataFrame, out_path: str | Path = None):
+    """Bar chart of annualised mean returns for each sector ETF."""
     return _bar_plot(
         summary_df, "MeanReturn", "Mean Annual Return (ETFs)", "Return", "skyblue", out_path
     )
 
-# Bar plot of annualized volatility for each ETF
+
 def plot_sector_volatility(summary_df: pd.DataFrame, out_path: str | Path = None):
-     return _bar_plot(
+    """Bar chart of annualised volatility for each sector ETF."""
+    return _bar_plot(
         summary_df, "Volatility", "Annualized Volatility (ETFs)", "Volatility", "orange", out_path
     )
 
-# Bar plot of Sharpe ratios for each ETF
+
 def plot_sector_sharpe(summary_df: pd.DataFrame, out_path: str | Path = None):
-     return _bar_plot(
+    """Bar chart of Sharpe ratios for each sector ETF."""
+    return _bar_plot(
         summary_df, "Sharpe", "Sharpe Ratio (ETFs)", "Sharpe", "mediumseagreen", out_path
     )
 
-# Heatmap showing pairwise correlations among ETFs
+
 def plot_sector_corr_heatmap(corr_df: pd.DataFrame, out_path: str | Path = None):
     """
     Plot correlation matrix as a heatmap and return the figure.
+
+        Args:
+        corr_df (pd.DataFrame): Correlation matrix of returns.
+        out_path (str | Path | None): Optional file path for saving.
+
+    Returns:
+        Figure: The Matplotlib figure object.
     """
     fig, ax = plt.subplots(figsize=(5.5, 5))
     sns.heatmap(
@@ -76,11 +107,17 @@ def plot_sector_corr_heatmap(corr_df: pd.DataFrame, out_path: str | Path = None)
     _maybe_save(fig, out_path)
     return fig
 
-# Cumulative growth of 1 euro per ETF
-# start from 1 then multiply by (1 + daily return)
+
 def plot_cumulative_returns(returns: pd.DataFrame, out_path: str | Path = None):
     """
     Plot cumulative growth of 1€ invested in each ETF and return the figure.
+
+     Args:
+        returns (pd.DataFrame): Daily returns for each ETF.
+        out_path (str | Path | None): Optional path to save the plot.
+
+    Returns:
+        Figure: The Matplotlib figure object.
     """
     growth = (1 + returns).cumprod() # turn daily returns into a cumulative growth index
     fig, ax = plt.subplots(figsize=(8,5)) # create the figure
