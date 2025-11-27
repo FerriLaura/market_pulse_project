@@ -73,6 +73,46 @@ The project follows the structure that was just presented.
 •	requirements.txt — list of Python dependencies
 •	.gitignore — excludes e.g. .venv/, __pycache__/, data/ from version control
 
+---
+## Data sources
+Data were retrieved by using Yahoo Financce (yfinance). 
+The price series that were considered are the ones that include adjusted close prices. 
+ETFs analyzed:
+	•	XLK — Technology
+	•	XLE — Energy
+	•	XLV — Healthcare
+	•	XLF — Financials
+	•	XLU — Utilities
+
+---
+## Main Libraries
+All dependencies are listed in requirements.txt
+The main libraries used are: 
+	•	pandas — data manipulation
+	•	numpy — numerical computation
+	•	matplotlib, seaborn — visualizations
+	•	yfinance — data retrieval
+	•	streamlit — interactive dashboard
+
+---
+## How to run the project
+Clone the repository: 
+git clone https://github.com/FerriLaura/market_pulse_project.git
+cd market_pulse_project
+
+Create and activate a virtual environment: 
+python -m venv .venv
+source .venv/bin/activate        
+
+Install the dependencies
+pip install -r requirements.txt
+
+Run the full analysis pipeline: 
+python -m main
+
+Run the streamlit web application: 
+streamlit run app.py
+
 ## Project methods 
 This project follows a structured pipeline that transforms raw financial data into quantitative insights about sector preformance, risk and interdipendence. 
 Each part of the process - data collection, computation, and visualization - is handled by a dedicated module within the project. 
