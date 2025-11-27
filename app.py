@@ -1,3 +1,12 @@
+"""
+Streamlit dashboard for exploring sector ETF performance.
+
+This app:
+- downloads historical prices for sector ETFs from Yahoo Finance
+- computes daily returns and annualised metrics (mean return, volatility, Sharpe)
+- shows correlations and cumulative growth over time
+- allows interactive control of period, frequency and risk-free rate
+"""
 # Imports
 from pathlib import Path
 import sys
@@ -39,7 +48,7 @@ st.caption(
     "Explore sector performance, risk and correlation using Yahoo Finance data (Technology, Energy, Utilities, Healthcare and Financials).")
 
 st.markdown(
-    """
+"""
 **What this app does**
 
 - Downloads historical prices for sector ETFs from Yahoo Finance  
@@ -107,6 +116,18 @@ if not selected:
 # --- DATA ---
 @st.cache_data(show_spinner=True, ttl=60*10)
 def load_prices(etfs, period, interval, auto_adjust, save_csv):
+    """Download ETF prices and cache the result.
+
+    Args:
+        etfs: List of ETF tickers (e.g. ["XLK", "XLE"]).
+        period: Lookback window (e.g. "1y", "5y").
+        interval: Data frequency ("1d", "1wk", "1mo").
+        auto_adjust: Whether to use adjusted prices.
+        save_csv: If True, save prices to data/etf_prices.csv.
+
+    Returns:
+        DataFrame of adjusted close prices (index=date, columns=tickers).
+    """
     df = fetch_prices(
         etfs,
         period=period,
@@ -137,22 +158,23 @@ st.dataframe(summary.style.format({"MeanReturn": "{:.2%}", "Volatility": "{:.2%}
 best_return_ticker = summary["MeanReturn"].idxmax()
 best_return_value  = summary["MeanReturn"].max()
 
+most_risky_ticker  = summary["Volatility"].idxmax()
+most_risky_value   = summary["Volatility"].max()
+
 best_sharpe_ticker = summary["Sharpe"].idxmax()
 best_sharpe_value  = summary["Sharpe"].max()
 
-most_risky_ticker  = summary["Volatility"].idxmax()
-most_risky_value   = summary["Volatility"].max()
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Best return", 
           f"{best_return_ticker}", 
           f"{best_return_value:.1%}")
-c2.metric("Best Sharpe", 
-          f"{best_sharpe_ticker}", 
-          f"{best_sharpe_value:.2f}")
-c3.metric("Highest volatility", 
+c2.metric("Highest volatility", 
           f"{most_risky_ticker}", 
           f"{most_risky_value:.1%}")
+c3.metric("Best Sharpe", 
+          f"{best_sharpe_ticker}", 
+          f"{best_sharpe_value:.2f}")
 
 #  --- PLOTS AND TABLES ---
 tab1, tab2, tab3, tab4, tab5 = st.tabs(
