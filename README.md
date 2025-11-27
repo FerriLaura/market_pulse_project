@@ -23,7 +23,7 @@ In particular,the project explores:
 - Explore diversification effects within the U.S. equity market  
 
 ---
-## **IMPORTANT!**: Project evolution and Branches
+## **IMPORTANT!** Project evolution and Branches
 This repository intentionally contains two branches, documenting the full methodological development.
 ### 1. main - Initial Version (Based on individual stock aggregation)
 **Sectors analyzed**
@@ -232,8 +232,8 @@ On the contrary, Utilities show lower correlations with all other sectors, confi
 Healthcare also maintains moderate but lower correlations, particularly with Technology (0.37), making it another defensive component that behaves more independently from growth-led sectors.
 
 Overall, the structure indicates that while U.S. sectors share broad market exposure, Utilities and Healthcare offer meaningful diversification, while Financials, Energy, and Technology move more tightly together, reflecting common macroeconomic influences.
----
 
+---
 ### 5. Cumulative Growth 
 The cumulative-return curves show that Technology (XLK) strongly outperformed all other sectors, steadily compounding gains after mid-year, while Utilities (XLU) also grew but more moderately.
 In contrast, Energy (XLE), Healthcare (XLV), and Financials (XLF) remained mostly flat, showing weaker momentum and sharper drawdowns, indicating lower trend persistence over the period.
