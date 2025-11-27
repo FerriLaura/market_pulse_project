@@ -1,7 +1,7 @@
 # Market Pulse
 *An analysis of sector performance, risk and correlation i U.S. markets*
 
---
+
 **Market Pulse** is a project that explores the behavior of different stock market sectors using historical price data from Yahoo Finance.
 In particular,the project explores: 
 - sector performance (returns)  
@@ -11,7 +11,7 @@ In particular,the project explores:
 - cumulative growth over time  
 - interactive exploration through a Streamlit web application
 
---
+
 ## Project's goals
 
 - Retrieve and clean real market data using yfinance 
@@ -22,7 +22,7 @@ In particular,the project explores:
 - Provide an interactive web dashboard built with Streamlit  
 - Explore diversification effects within the U.S. equity market  
 
---
+
 ## **IMPORTANT!** Project evolution and Branches
 This repository intentionally contains two branches, documenting the full methodological development.
 ### 1. main - Initial Version (Based on individual stock aggregation)
@@ -43,7 +43,7 @@ Both branches remain in the repository intentionally:
 	- main shows the original attempt, demonstrating understanding of sector construction and statistical aggregation issues.
 	- etf-version shows the final corrected methodology, using real market products and eliminating aggregation bias.
 
---
+
 ## Project structure 
 market_pulse_project/
 │
@@ -73,8 +73,8 @@ The project follows the structure that was just presented.
 •	requirements.txt — list of Python dependencies
 •	.gitignore — excludes e.g. .venv/, __pycache__/, data/ from version control
 
---
-## Data sources
+
+## Data Sources
 Data were retrieved by using Yahoo Financce (yfinance). 
 The price series that were considered are the ones that include adjusted close prices. 
 ETFs analyzed:
@@ -84,7 +84,7 @@ ETFs analyzed:
 	•	XLF — Financials
 	•	XLU — Utilities
 
---
+
 ## Main Libraries
 All dependencies are listed in requirements.txt
 The main libraries used are: 
@@ -94,7 +94,7 @@ The main libraries used are:
 	•	yfinance — data retrieval
 	•	streamlit — interactive dashboard
 
---
+
 ## How to run the project
 Clone the repository: 
 git clone https://github.com/FerriLaura/market_pulse_project.git
@@ -113,7 +113,7 @@ python -m main
 Run the streamlit web application: 
 streamlit run app.py
 
---
+
 ## Project methods 
 This project follows a structured pipeline that transforms raw financial data into quantitative insights about sector preformance, risk and interdipendence. 
 Each part of the process - data collection, computation, and visualization - is handled by a dedicated module within the project. 
@@ -211,7 +211,7 @@ Features
 
 To run the app, from the project root paste: streamlit run app.py
 
---
+
 ## Interpretation of results
 
 ### 1. Sector Performance (Mean Annual Return)
@@ -234,7 +234,7 @@ Overall, the structure indicates that while U.S. sectors share broad market expo
 The cumulative-return curves show that Technology (XLK) strongly outperformed all other sectors, steadily compounding gains after mid-year, while Utilities (XLU) also grew but more moderately.
 In contrast, Energy (XLE), Healthcare (XLV), and Financials (XLF) remained mostly flat, showing weaker momentum and sharper drawdowns, indicating lower trend persistence over the period.
 
---
+
 ## Limitations and Critical Remarks
 
 There are some critical points that we have to consider while interpreting the results of the analysis: 
