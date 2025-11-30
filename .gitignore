@@ -15,5 +15,5 @@ __pycache__/
 data/
 outputs/
 
-# Ignore notebooks checkpoints
-.ipynb_checkpoints/
+# Ignore Streamlit 
+.streamlit/

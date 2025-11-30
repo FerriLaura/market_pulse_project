@@ -1,119 +1,110 @@
+# metrics.py
+"""
+Functions for computing daily returns, annualised metrics, and correlations
+for sector ETF price data. These utilities are used throughout the project
+to generate the performance and risk statistics shown in the analysis and
+Streamlit dashboard.
+"""
+
+# Import libraries
 from pathlib import Path
-from typing import Optional
 import numpy as np
 import pandas as pd
+from .config import TRADING_DAYS_PER_YEAR, RISK_FREE_ANNUAL
 
-TRADING_DAYS_PER_YEAR = 252
 
-# daily returns
 def compute_daily_returns(prices: pd.DataFrame) -> pd.DataFrame:
+    """
+    Compute daily percentage returns from a DataFrame of prices.
+    
+    Daily returns are calculated using the formula:
+        (P_t - P_{t-1}) / P_{t-1}
+
+    Args:
+        prices (pd.DataFrame): DataFrame of adjusted close prices, where each
+            column corresponds to an ETF.
+
+    Returns:
+        pd.DataFrame: Daily returns for each ETF. The first row is dropped
+        because pct_change() produces a NaN in the first position.
+    """
     if not isinstance (prices, pd.DataFrame):
         raise TypeError("prices must be a padas DataFrame of Close prices")
-    # percent daily returns
+    
     return prices.pct_change().dropna()
 
+
 def summarize_returns(
     returns: pd.DataFrame,
-    annualize: bool = True,
-    trading_days: int = TRADING_DAYS_PER_YEAR
-
-# annualize statistics
-def annualize_stats(
-        daily_mean: pd.Series,
-        daily_std: pd.Series,
-        periods_per_year: int = TRADING_DAYS_PER_YEAR,
-):
-    ann_mean = daily_mean * periods_per_year
-    ann_std  = daily_std * np.sqrt(periods_per_year)
-    return ann_mean, ann_std
-
-# Share ratio
-def sharpe_ratio(
-        returns: pd.DataFrame,
-        risk_free_annual: float = 0.02,
-        periods_per_year: int = TRADING_DAYS_PER_YEAR
-) -> pd.Series:
-    mean_d = returns.mean()
-    std_d  = returns.std(ddof=1)                 
-
-    mu, sigma = annualize_stats(mean_d, std_d, periods_per_year)
-    sigma = sigma.replace({0.0: np.nan})  # avoid division by zero
-
-    sharpe = (mu - risk_free_annual) / sigma
-    sharpe.name = "Sharpe"
-    return sharpe
-
-# Summary table with annualized MeanReturn, Volatility, Variance and Sharpe
-def summarize_returns(
-    returns: pd.DataFrame,
-    annualize: bool = True,
-    trading_days: int = TRADING_DAYS_PER_YEAR, 
-    risk_free_annual: float = 0.02
+    trading_days: int = TRADING_DAYS_PER_YEAR,
+    risk_free_annual: float = RISK_FREE_ANNUAL,
 ) -> pd.DataFrame:
+    """
+    Compute annualised mean return, volatility and Sharpe ratio.
+    
+    Daily mean and standard deviation are annualised using:
+        mean * N_days
+        std * sqrt(N_days)
+
+    Args:
+        returns (pd.DataFrame): Daily returns for each ETF.
+        trading_days (int): Number of trading days used for annualisation.
+        risk_free_annual (float): Annual risk-free rate used for Sharpe ratio.
+
+    Returns:
+        pd.DataFrame: Table with columns:
+            - MeanReturn
+            - Volatility
+            - Sharpe
+    """
     if returns.empty:
         raise ValueError("returns is empty")
+
+    # Daily statistics
+    mean_d = returns.mean()         
+    vol_d = returns.std(ddof=1)     
     
-    mean_daily = returns.mean()
-    vol_daily = returns.std()
-    var_daily = vol_daily**2
+    
+    # Annualize
+    mean_a = mean_d * trading_days
+    vol_a = vol_d * np.sqrt(trading_days)
+   
+    # Sharpe 
+    sharpe = (mean_a - risk_free_annual) / vol_a.replace({0.0: np.nan})
 
-    if annualize: 
-        mean = mean_daily * trading_days
-        vol = vol_daily * np.sqrt(trading_days)
-        var = vol**2
-    vol_daily = returns.std(ddof=1)
-    var_daily = vol_daily ** 2
-
-    if annualize: 
-        N = returns.shape[0]                    # number of trading days in sample
-        growth = (1.0 + returns).prod()         # cumulative growth per column
-        mean   = growth ** (trading_days / N) - 1   # 1-year equivalent (geometric)
-        vol    = vol_daily * np.sqrt(trading_days)  # annualized volatility
-        var    = vol ** 2
-
-    else:
-        mean, vol, var = mean_daily, vol_daily, var_daily
     
     out = pd.DataFrame({
-        "MeanReturn": mean,
-        "Volatility": vol,
-        "Variance": var,
+        "MeanReturn": mean_a,
+        "Volatility": vol_a,
+        "Sharpe": sharpe,
     })
-
-
-    out["Sharpe"] = sharpe_ratio(returns, risk_free_annual, trading_days)
-
-    out.index.name = "Ticker"
+    out.index.name = "Ticker"         
     return out
 
 
-# Correlation matrix across columns
+# Correlation matrix 
 def correlation_matrix(returns: pd.DataFrame) -> pd.DataFrame:
-    return returns.corr()
+    """
+    Compute pairwise correlations between ETF returns.
 
-# compute sector aggregation (equally weighted)
-def make_sector_returns(
-    returns: pd.DataFrame,
-    tickers_by_sector: dict[str, list[str]],
-) -> pd.DataFrame:
-    sector_cols = {}
-    
-    for sector, tickers in tickers_by_sector.items():
-        cols = [t for t in tickers if t in returns.columns]
-        if not cols:
-            print(f"No tickers found for sector: {sector}")
-            continue
-        sector_cols[sector] = returns[cols].mean(axis=1)
-    sector_ret = pd.DataFrame(sector_cols)
-    return sector_ret.dropna()
+    Args:
+        returns (pd.DataFrame): Daily returns for each ETF.
 
+    Returns:
+        pd.DataFrame: Correlation matrix (values between -1 and 1).
+    """
+    return returns.corr()                 
 
-    sector_ret = pd.DataFrame(sector_cols)
-    return sector_ret.dropna()
-
-# Save any dataframe to CSV, creating parent folders if needed
+# Save tables
 def save_table(df: pd.DataFrame, path: str | Path) -> None:
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(path)
-    print(f"saved:{path}")
+    """
+    Save a DataFrame to CSV, ensuring that folders are created if needed.
+
+    Args:
+        df (pd.DataFrame): Table to be saved.
+        path (str | Path): Output file path for the CSV file.
+    """
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)         
+    df.to_csv(p)                                        
+    print(f"Saved: {p}")                               
